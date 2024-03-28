@@ -19,4 +19,5 @@ First create the following helpers in 'Settings - Devices & Services - Helpers'<
 - input_number.last_month_rain<br>
 - input_number.rain_yesterday<br>
 <br>
-Then create the automations using the automation files provided. Make sure to change any sensor entity to use the name of your entity.
+Then create the automations using the automation files provided. <br>
+**Make sure to change any sensor entity (in my case gw1100a_v2_2_3_###) to use the name of your entity.**
