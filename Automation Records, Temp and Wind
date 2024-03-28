@@ -1,0 +1,99 @@
+alias: Weather - Records, Temp & Wind
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.gw1100a_v2_2_3_outdoor_temperature
+    id: temp_change
+  - platform: state
+    entity_id:
+      - sensor.gw1100a_v2_2_3_wind_gust
+    id: wind_speed
+condition: []
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - temp_change
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_outdoor_temperature
+            above: input_number.highest_recorded_temp
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_outdoor_temperature')}}"
+            target:
+              entity_id: input_number.highest_recorded_temp
+          - service: input_datetime.set_datetime
+            data:
+              date: "{{ now().date() }}"
+            target:
+              entity_id: input_datetime.highest_temp_date
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - service: telegram_bot.send_message
+            data:
+              message: >-
+                New temperature high recorded. Now {{
+                states('input_number.highest_recorded_temp') }}°C
+      - conditions:
+          - condition: trigger
+            id:
+              - temp_change
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_outdoor_temperature
+            below: input_number.lowest_recorded_temp
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_outdoor_temperature')}}"
+            target:
+              entity_id: input_number.lowest_recorded_temp
+          - service: input_datetime.set_datetime
+            data:
+              date: "{{ now().date() }}"
+            target:
+              entity_id: input_datetime.lowest_temp_date
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - service: telegram_bot.send_message
+            data:
+              message: >-
+                New temperature low recorded. Now {{
+                states('input_number.lowest_recorded_temp') }}°C
+      - conditions:
+          - condition: trigger
+            id:
+              - wind_speed
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_wind_gust
+            above: input_number.highest_recorded_wind_speed
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_wind_gust')}}"
+            target:
+              entity_id: input_number.highest_recorded_wind_speed
+          - service: input_datetime.set_datetime
+            data:
+              date: "{{ now().date() }}"
+            target:
+              entity_id: input_datetime.highest_wind_speed_date
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 2
+              milliseconds: 0
+          - service: telegram_bot.send_message
+            data:
+              message: >-
+                New fastest wind speed recorded. Now {{
+                states('input_number.highest_recorded_wind_speed') }} mph
+mode: single
