@@ -1,0 +1,37 @@
+alias: Weather - Day Wind Max
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.WIND_GUST_SENSOR
+    id: wind_speed
+  - platform: time
+    at: "00:00:00"
+    id: midnight_reset
+condition: []
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - wind_speed
+          - condition: numeric_state
+            entity_id: sensor.WIND_GUST_SENSOR
+            above: input_number.day_wind_max
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.WIND_GUST_SENSOR')}}"
+            target:
+              entity_id: input_number.day_wind_max
+      - conditions:
+          - condition: trigger
+            id:
+              - midnight_reset
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: 0
+            target:
+              entity_id: input_number.day_wind_max
+mode: single
