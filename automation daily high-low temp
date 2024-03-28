@@ -1,0 +1,66 @@
+alias: Weather - Daily High/Low Temp
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.gw1100a_v2_2_3_outdoor_temperature
+    id: temp
+  - platform: time
+    at: "00:00:00"
+    id: midnight_reset
+condition: []
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - temp
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_outdoor_temperature
+            above: input_number.day_temp_max
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_outdoor_temperature')}}"
+            target:
+              entity_id: input_number.day_temp_max
+          - service: input_datetime.set_datetime
+            data:
+              datetime: "{{ now() }}"
+            target:
+              entity_id: input_datetime.day_temp_max_time
+      - conditions:
+          - condition: trigger
+            id:
+              - midnight_reset
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: -100
+            target:
+              entity_id:
+                - input_number.day_temp_max
+          - service: input_number.set_value
+            data:
+              value: 100
+            target:
+              entity_id: input_number.day_temp_min
+      - conditions:
+          - condition: trigger
+            id:
+              - temp
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_outdoor_temperature
+            below: input_number.day_temp_min
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_outdoor_temperature')}}"
+            target:
+              entity_id: input_number.day_temp_min
+          - service: input_datetime.set_datetime
+            data:
+              datetime: "{{ now() }}"
+            target:
+              entity_id: input_datetime.day_temp_min_time
+mode: single
