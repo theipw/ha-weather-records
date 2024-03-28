@@ -1,0 +1,13 @@
+alias: Weather - Set Rain Yesterday
+description: ""
+trigger:
+  - platform: time
+    at: "23:59:00"
+condition: []
+action:
+  - service: input_number.set_value
+    data:
+      value: "{{ states('sensor.gw1100a_v2_2_3_daily_rain_rate') }}"
+    target:
+      entity_id: input_number.rain_yesterday
+mode: single
