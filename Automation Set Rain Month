@@ -1,0 +1,51 @@
+alias: Weather - Set Rain Month
+description: ""
+trigger:
+  - platform: time
+    at: "23:59:00"
+condition:
+  - condition: or
+    conditions:
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '01-31' }}"
+        alias: January 31st
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '02-28' }}"
+        alias: February 28th
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '03-31' }}"
+        alias: March 31st
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '04-30' }}"
+        alias: April 30th
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '05-31' }}"
+        alias: May 31st
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '06-30' }}"
+        alias: June 30th
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '07-31' }}"
+        alias: July 31st
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '08-31' }}"
+        alias: August 31st
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '09-30' }}"
+        alias: September 30th
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '10-31' }}"
+        alias: October 31st
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '11-30' }}"
+        alias: November 30th
+      - condition: template
+        value_template: "{{ now().strftime('%m-%d') == '12-31' }}"
+        alias: December 31st
+action:
+  - service: input_number.set_value
+    data:
+      value: "{{ states('sensor.gw1100a_v2_2_3_monthly_rain_rate') }}"
+    target:
+      entity_id: input_number.last_month_rain
+mode: single
