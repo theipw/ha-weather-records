@@ -1,0 +1,55 @@
+alias: Weather - Records, Rain
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.gw1100a_v2_2_3_total_rain
+condition: []
+action:
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_daily_rain_rate
+            above: input_number.highest_daily_recorded_rainfall
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_daily_rain_rate')}}"
+            target:
+              entity_id: input_number.highest_daily_recorded_rainfall
+          - service: input_datetime.set_datetime
+            data:
+              date: "{{ now().date() }}"
+            target:
+              entity_id: input_datetime.highest_daily_rainfall_date
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_weekly_rain_rate
+            above: input_number.highest_weekly_recorded_rainfall
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_weekly_rain_rate')}}"
+            target:
+              entity_id: input_number.highest_weekly_recorded_rainfall
+          - service: input_datetime.set_datetime
+            data:
+              date: "{{ now().date() }}"
+            target:
+              entity_id: input_datetime.highest_weekly_rainfall_date
+      - conditions:
+          - condition: numeric_state
+            entity_id: sensor.gw1100a_v2_2_3_monthly_rain_rate
+            above: input_number.highest_monthly_recorded_rainfall
+        sequence:
+          - service: input_number.set_value
+            data:
+              value: "{{states('sensor.gw1100a_v2_2_3_monthly_rain_rate')}}"
+            target:
+              entity_id: input_number.highest_monthly_recorded_rainfall
+          - service: input_datetime.set_datetime
+            data:
+              date: "{{ now().date() }}"
+            target:
+              entity_id: input_datetime.highest_monthly_rainfall_date
+mode: single
